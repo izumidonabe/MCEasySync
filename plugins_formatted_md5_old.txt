@@ -1,0 +1,15 @@
+server~plugins~Essentials.jar a33258279bdb85ce1de5c1c012e31814
+server~plugins~EssentialsAntiBuild.jar b0d3deb5724d124cc578b471e2981dbc
+server~plugins~EssentialsChat.jar bfa944915b2465bfa0b38b5903cbe183
+server~plugins~EssentialsGroupManager.jar 1c5cc224a928e77f00aa4bedf96045d0
+server~plugins~EssentialsProtect.jar a425528a148ebab4c0ef5a0d30786348
+server~plugins~EssentialsSpawn.jar 06bb653b9c9f807baf06f1eca4b9bbed
+server~plugins~Essentials~config.yml 20190423b8ee36717a219e5189c12502
+server~plugins~Essentials~items.csv 2a5d8c0f23a452f03c11f74fc6021730
+server~plugins~Essentials~upgrades-done.yml 9f6c81dbae24e65d2d4cfe718354d6d6
+server~plugins~Essentials~worth.yml 13235377872c79269bf574a75e62dcf5
+server~plugins~GroupManager~config.yml eac586add4e099730e468a53dd04c1e8
+server~plugins~GroupManager~globalgroups.yml af4f560e482ea324e8faca902c8615b4
+server~plugins~GroupManager~worlds~world~groups.yml 3f0b132d644cefc4aa3caf62947bca27
+server~plugins~GroupManager~worlds~world~users.yml 57d1e1e8c51c63698eb0c4ff62c1d630
+server~plugins~PluginMetrics~config.yml 97a90f7390a89a0920a00ac6f924eb5b
