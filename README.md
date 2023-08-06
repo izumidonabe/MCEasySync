@@ -22,12 +22,12 @@ A tool that can sync your save with different computers<br>
 
 ## 部署
 
-1，服务端：将Serverfile文件夹下的file_server.py上传至服务器，向第25行的字典添加用户，默认端口5000
+1，服务端：将Serverfile文件夹下的file_server.py上传至服务器，向第25行的字典添加用户，默认端口5000<br>
 2，客户端，直接启动main.py即可
 
 ## 结语
-这是作者自学python后做的第一个开源项目
-可能有一些bug和奇怪的逻辑/变量名设计
+这是作者自学python后做的第一个开源项目<br>
+可能有一些bug和奇怪的逻辑/变量名设计<br>
 如果有时间的话，给我点一个小小的Star吧
 
 
