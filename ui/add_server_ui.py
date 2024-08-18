@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'MCES_Settings_uiQlRjCn.ui'
+## Form generated from reading UI file 'MCES_Settings_uiMbuRAj.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.15.2
 ##
@@ -19,22 +19,21 @@ from qfluentwidgets import CardWidget
 from qfluentwidgets import SingleDirectionScrollArea
 from qfluentwidgets import TitleLabel
 from qfluentwidgets import LineEdit
-from qfluentwidgets import PasswordLineEdit
 
 
-class Ui_MCES_Settings_ui(object):
-    def setupUi(self, MCES_Settings_ui):
-        if not MCES_Settings_ui.objectName():
-            MCES_Settings_ui.setObjectName(u"MCES_Settings_ui")
-        MCES_Settings_ui.resize(789, 583)
-        self.verticalLayout = QVBoxLayout(MCES_Settings_ui)
+class Ui_Add_Server_Ui(object):
+    def setupUi(self, Add_Server_Ui):
+        if not Add_Server_Ui.objectName():
+            Add_Server_Ui.setObjectName(u"Add_Server_Ui")
+        Add_Server_Ui.resize(855, 1005)
+        self.verticalLayout = QVBoxLayout(Add_Server_Ui)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.SingleDirectionScrollArea = SingleDirectionScrollArea(MCES_Settings_ui)
+        self.SingleDirectionScrollArea = SingleDirectionScrollArea(Add_Server_Ui)
         self.SingleDirectionScrollArea.setObjectName(u"SingleDirectionScrollArea")
         self.SingleDirectionScrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 761, 494))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 827, 916))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.CardWidget_2 = CardWidget(self.scrollAreaWidgetContents)
@@ -55,16 +54,16 @@ class Ui_MCES_Settings_ui(object):
 
         self.horizontalLayout_6.addWidget(self.Label1)
 
-        self.IpEditLine = LineEdit(self.CardWidget_2)
-        self.IpEditLine.setObjectName(u"IpEditLine")
-        self.IpEditLine.setMaximumSize(QSize(400, 50))
+        self.ServerName_edit = LineEdit(self.CardWidget_2)
+        self.ServerName_edit.setObjectName(u"ServerName_edit")
+        self.ServerName_edit.setMaximumSize(QSize(400, 50))
         font = QFont()
         font.setPointSize(12)
         font.setBold(False)
         font.setWeight(50)
-        self.IpEditLine.setFont(font)
+        self.ServerName_edit.setFont(font)
 
-        self.horizontalLayout_6.addWidget(self.IpEditLine)
+        self.horizontalLayout_6.addWidget(self.ServerName_edit)
 
 
         self.verticalLayout_2.addWidget(self.CardWidget_2)
@@ -87,14 +86,14 @@ class Ui_MCES_Settings_ui(object):
 
         self.horizontalLayout_7.addWidget(self.Label2)
 
-        self.PortEditLine = QLineEdit(self.CardWidget_3)
-        self.PortEditLine.setObjectName(u"PortEditLine")
-        self.PortEditLine.setMaximumSize(QSize(400, 50))
+        self.Sync_Folders_edit = QLineEdit(self.CardWidget_3)
+        self.Sync_Folders_edit.setObjectName(u"Sync_Folders_edit")
+        self.Sync_Folders_edit.setMaximumSize(QSize(400, 50))
         font1 = QFont()
         font1.setPointSize(12)
-        self.PortEditLine.setFont(font1)
+        self.Sync_Folders_edit.setFont(font1)
 
-        self.horizontalLayout_7.addWidget(self.PortEditLine)
+        self.horizontalLayout_7.addWidget(self.Sync_Folders_edit)
 
 
         self.verticalLayout_2.addWidget(self.CardWidget_3)
@@ -117,12 +116,12 @@ class Ui_MCES_Settings_ui(object):
 
         self.horizontalLayout_8.addWidget(self.Label3)
 
-        self.UsernameEditLine = QLineEdit(self.CardWidget_4)
-        self.UsernameEditLine.setObjectName(u"UsernameEditLine")
-        self.UsernameEditLine.setMaximumSize(QSize(400, 50))
-        self.UsernameEditLine.setFont(font1)
+        self.Server_Core_dir_edit = QLineEdit(self.CardWidget_4)
+        self.Server_Core_dir_edit.setObjectName(u"Server_Core_dir_edit")
+        self.Server_Core_dir_edit.setMaximumSize(QSize(400, 50))
+        self.Server_Core_dir_edit.setFont(font1)
 
-        self.horizontalLayout_8.addWidget(self.UsernameEditLine)
+        self.horizontalLayout_8.addWidget(self.Server_Core_dir_edit)
 
 
         self.verticalLayout_2.addWidget(self.CardWidget_4)
@@ -145,12 +144,11 @@ class Ui_MCES_Settings_ui(object):
 
         self.horizontalLayout_9.addWidget(self.Label4)
 
-        self.PasswordLineEdit = PasswordLineEdit(self.CardWidget_5)
-        self.PasswordLineEdit.setObjectName(u"PasswordLineEdit")
-        self.PasswordLineEdit.setMaximumSize(QSize(400, 50))
-        self.PasswordLineEdit.setFont(font)
+        self.MemoryEdit = LineEdit(self.CardWidget_5)
+        self.MemoryEdit.setObjectName(u"MemoryEdit")
+        self.MemoryEdit.setMaximumSize(QSize(400, 50))
 
-        self.horizontalLayout_9.addWidget(self.PasswordLineEdit)
+        self.horizontalLayout_9.addWidget(self.MemoryEdit)
 
 
         self.verticalLayout_2.addWidget(self.CardWidget_5)
@@ -170,7 +168,7 @@ class Ui_MCES_Settings_ui(object):
 
         self.horizontalLayout_2.addItem(self.horizontalSpacer)
 
-        self.back_button = PrimaryPushButton(MCES_Settings_ui)
+        self.back_button = PrimaryPushButton(Add_Server_Ui)
         self.back_button.setObjectName(u"back_button")
         self.back_button.setMinimumSize(QSize(100, 50))
         self.back_button.setMaximumSize(QSize(300, 100))
@@ -182,18 +180,18 @@ class Ui_MCES_Settings_ui(object):
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
 
-        self.retranslateUi(MCES_Settings_ui)
+        self.retranslateUi(Add_Server_Ui)
 
-        QMetaObject.connectSlotsByName(MCES_Settings_ui)
+        QMetaObject.connectSlotsByName(Add_Server_Ui)
     # setupUi
 
-    def retranslateUi(self, MCES_Settings_ui):
-        MCES_Settings_ui.setWindowTitle(QCoreApplication.translate("MCES_Settings_ui", u"Form", None))
-        self.Label1.setText(QCoreApplication.translate("MCES_Settings_ui", u"MCES\u670d\u52a1ip:", None))
-        self.IpEditLine.setText("")
-        self.Label2.setText(QCoreApplication.translate("MCES_Settings_ui", u"MCES\u670d\u52a1\u7aef\u53e3:", None))
-        self.Label3.setText(QCoreApplication.translate("MCES_Settings_ui", u"MCES\u7528\u6237\u540d:", None))
-        self.Label4.setText(QCoreApplication.translate("MCES_Settings_ui", u"MCES\u5bc6\u7801:", None))
-        self.back_button.setText(QCoreApplication.translate("MCES_Settings_ui", u"\u4fdd\u5b58\u5e76\u8fd4\u56de", None))
+    def retranslateUi(self, Add_Server_Ui):
+        Add_Server_Ui.setWindowTitle(QCoreApplication.translate("Add_Server_Ui", u"Form", None))
+        self.Label1.setText(QCoreApplication.translate("Add_Server_Ui", u"\u670d\u52a1\u5668\u540d\u79f0(\u82f1\u8bed)", None))
+        self.ServerName_edit.setText("")
+        self.Label2.setText(QCoreApplication.translate("Add_Server_Ui", u"\u540c\u6b65\u8def\u5f84", None))
+        self.Label3.setText(QCoreApplication.translate("Add_Server_Ui", u"\u670d\u52a1\u5668\u6838\u5fc3\u540d(.jar)", None))
+        self.Label4.setText(QCoreApplication.translate("Add_Server_Ui", u"\u4f7f\u7528\u5185\u5b58(xG)\uff0c\u5199G", None))
+        self.back_button.setText(QCoreApplication.translate("Add_Server_Ui", u"\u4fdd\u5b58\u5e76\u8fd4\u56de", None))
     # retranslateUi
 

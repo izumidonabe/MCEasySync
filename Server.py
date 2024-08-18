@@ -15,39 +15,51 @@ import FileHandler as fh
 
 
 class Server:
-    MinecraftServers_Instance = [] #用于存储可用的MinecraftServer实例 是类变量 还可以检测是否完成过MCES设置
+    minecraft_servers = [] #用于存储可用的MinecraftServer实例 是类变量 还可以检测是否完成过MCES设置
     MCESServer = None #用于存储MCESServer实例
 
     def __init__(self,**kwargs):
-        if Server.MCESServer is None:
-            #关闭进程重新启动时走if(已经存在配置文件)
-            if kwargs.get("config_file") is not None:
-                self.__dict__ = json.loads(open(kwargs.get("config_file")).read())
-                #第一次使用，新建配置文件
-            else:
+        if kwargs.get("config_file") is not None:
+            self.__dict__ = json.loads(open(kwargs.get("config_file")).read())
+        else:
+            if Server.MCESServer is None:
+                #关闭进程重新启动时，需要创建一个新的实例
                 self.ip = kwargs.get("ip")
                 self.port = kwargs.get("port")
                 self.username = kwargs.get("username")
                 self.password = kwargs.get("password")
-                self.minecraft_servers = {} #存储定义的MinecraftServer服务器路径
+                self.minecraft_servers = kwargs.get("minecraft_servers") #存储定义的MinecraftServer服务器路径 #Servername:server_folder
+                self.config_file = "Servers/MCES_config.json"
                 if not self.ip.startswith("http://"):
                     self.ip = "http://" + self.ip
-                json.dumps(self.__dict__, open("Servers/MCES_config.json", "w")) #保存配置文件
-            Server.MCESServer = self
-        else:
-            self.__dict__.update(Server.MCESServer.__dict__) #切换页面重新加载时，直接复制之前存在的MCESServer实例
+                json.dump(self.__dict__, open("Servers/MCES_config.json", "w")) #保存配置文件
+                print("已经重新创建实例")
+                Server.MCESServer = self
+                #其他情况下，直接读取之前的实例并更新信息
+            else:
+                Server.MCESServer.ip = kwargs.get("ip")
+                Server.MCESServer.port = kwargs.get("port")
+                Server.MCESServer.username = kwargs.get("username")
+                Server.MCESServer.password = kwargs.get("password")
+                self.__dict__ = Server.MCESServer.__dict__
+                print("已经更新实例")
+                json.dump(self.__dict__, open("Servers/MCES_config.json", "w"))  # 保存配置文件
+
+                #读取配置文件
 
 
 
-    def add_game_server(self, server):
-        self.MinecraftServers_Instance.append(server)
+    def add_game_server(self, server_folder):
+        self.minecraft_servers.append(server_folder)
+        print(self.__dict__)
+        json.dump(self.__dict__, open("Servers/MCES_config.json", "w"))
 
 
-    def remove_game_server(self, server):
-        self.MinecraftServers_Instance.remove(server)
+    def remove_game_server(self, server_folder):
+        self.minecraft_servers.remove(server_folder)
 
     def get_available_servers(self):
-        return self.MinecraftServers_Instance
+        return self.minecraft_servers
 
     def download(self,filepath):
         filename = os.path.basename(filepath)
@@ -131,8 +143,6 @@ class MinecraftServer:
             self.server_status = "stopped"
             self.start_command = f"java -Xmx{self.server_memory} -jar {self.server_core}"
             self.server_name = self.server_folder.split("/")[-1]
-            self.server = None
-
             if os.path.exists(self.server_folder + "/MCES_configs") is False:
                 os.mkdir(self.server_folder + "/MCES_configs/")
 
@@ -146,27 +156,28 @@ class MinecraftServer:
         self.server_status = "stopped"
         self.server_process = None
 
-    def add_server(self, server):
-        self.server = server #添加服务器Server类 实现文件上传下载的实例
+    # def add_server(self, server):
+    #     self.server = server #添加服务器Server类 实现文件上传下载的实例
 
 
     def save_config(self):
         open(self.server_folder + "/MCES_configs/server_config.json", "w").write(json.dumps(self.__dict__))
+        print("配置文件已经保存"+self.server_folder + "/MCES_configs/server_config.json")
 
     def update_Server_files(self,update_list): #先这么放着，写到前端再说
         for file in update_list:
-            self.server.upload(file)
+            Server.MCESServer.upload(file)
 
     def update_local_files(self,update_list): #先这么放着，写到前端再说
         for file in update_list:
-            self.server.download(file)
+            Server.MCESServer.download(file)
 
     def update_local_list(self): #update local files
         all_md5 = {}  # local md5
         for folder in self.folders_to_sync:
             all_md5.update(fh.get_all_files_md5(self.server_folder + "/" + folder))
         # download md5 from server
-        self.server.download(self.server_folder + "/MCES_configs/server_md5.json")
+        Server.MCESServer.download(self.server_folder + "/MCES_configs/server_md5.json")
         server_md5 = json.loads(open(self.server_folder + "/MCES_configs/server_md5.json").read())
         update_list = []
         for k, v in server_md5.items():
@@ -180,13 +191,13 @@ class MinecraftServer:
             all_md5.update(fh.get_all_files_md5(self.server_folder + "/" + folder))
         # download md5 from server
         if not init:
-            self.server.download(self.server_folder + "/MCES_configs/server_md5.json")
+            Server.MCESServer.download(self.server_folder + "/MCES_configs/server_md5.json")
             server_md5 = json.loads(open(self.server_folder + "/MCES_configs/server_md5.json").read())
         else:
             server_md5 = {}
         update_list = []
         json.dump(all_md5, open(self.server_folder + "/MCES_configs/server_md5.json", "w"))
-        self.server.upload(self.server_folder + "/MCES_configs/server_md5.json")#upload md5 to server
+        Server.MCESServer.upload(self.server_folder + "/MCES_configs/server_md5.json")#upload md5 to server
         for k, v in all_md5.items():
             if server_md5.get(k) is None or server_md5.get(k) != all_md5.get(k):
                 update_list.append(k)
