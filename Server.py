@@ -21,6 +21,8 @@ class Server:
     def __init__(self,**kwargs):
         if kwargs.get("config_file") is not None:
             self.__dict__ = json.loads(open(kwargs.get("config_file")).read())
+            if Server.MCESServer is None:
+                Server.MCESServer = self
         else:
             if Server.MCESServer is None:
                 #关闭进程重新启动时，需要创建一个新的实例
@@ -61,6 +63,14 @@ class Server:
     def get_available_servers(self):
         return self.minecraft_servers
 
+    class FileNotFoundError(Exception):
+        def __str__(self):
+            return "FileNotFoundError"
+
+    class ServerConnectionError(Exception):
+        def __str__(self):
+            return "ServerConnectionError"
+
     def download(self,filepath):
         filename = os.path.basename(filepath)
         dir = os.path.dirname(filepath)
@@ -81,14 +91,17 @@ class Server:
                     success = True
                     print(f'{filename}文件下载成功！')
                     break  # Exit the loop on successful download
-                else:
-                    print(f'{filename}文件下载失败！')
+                else: # Retry on 404 response
+
+                    print(f'{filename}文件未找到，但成功连接了服务器！')
+                    raise Server.FileNotFoundError
 
             except (ChunkedEncodingError, IncompleteRead, RequestException) as e:
                 print(f'下载异常，尝试重新下载（第 {retry} 次）', str(e))
 
         if not success:
             print('下载失败！请稍后重试。')
+            raise Server.ServerConnectionError
 
     def upload(self, filepath):
         dir = os.path.dirname(filepath)
@@ -103,12 +116,18 @@ class Server:
             print(f'{filename}文件上传成功！')
         else:
             print(f'{filename}上传失败！')
+            raise Server.ServerConnectionError
+
+
+
+
 
 class frpClient:
 
     def __init__(self):
-        self.client_status = None
+        self.client_status = "stopped"
         self.process = None
+        self.stop()
 
     def start(self):
         self.client_status = "running"
@@ -148,10 +167,12 @@ class MinecraftServer:
 
     def start_minecraft_server(self):
         mc_process = subprocess.Popen(self.start_command, cwd=self.server_folder, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        print("Minecraft Server started"+self.start_command)
         self.server_process = mc_process
         self.server_status = "running"
 
     def stop_minecraft_server(self):
+        #TODO UI重新初始化的时候会出现问题，因为MC_Server的实例会被重新创建，但是MinecraftServer这个进程不会被绑定在新的实例上
         self.server_process.communicate(input="stop\n")
         self.server_status = "stopped"
         self.server_process = None
@@ -164,20 +185,20 @@ class MinecraftServer:
         open(self.server_folder + "/MCES_configs/server_config.json", "w").write(json.dumps(self.__dict__))
         print("配置文件已经保存"+self.server_folder + "/MCES_configs/server_config.json")
 
-    def update_Server_files(self,update_list): #先这么放着，写到前端再说
-        for file in update_list:
-            Server.MCESServer.upload(file)
+    # def update_Server_files(self,update_list): #先这么放着，写到前端再说
+    #     for file in update_list:
+    #         Server.MCESServer.upload(file)
+    #
+    # def update_local_files(self,update_list): #先这么放着，写到前端再说
+    #     for file in update_list:
+    #         Server.MCESServer.download(file)
 
-    def update_local_files(self,update_list): #先这么放着，写到前端再说
-        for file in update_list:
-            Server.MCESServer.download(file)
-
-    def update_local_list(self): #update local files
+    def update_local_list(self): #更新本地的文件
         all_md5 = {}  # local md5
         for folder in self.folders_to_sync:
             all_md5.update(fh.get_all_files_md5(self.server_folder + "/" + folder))
         # download md5 from server
-        Server.MCESServer.download(self.server_folder + "/MCES_configs/server_md5.json")
+        # Server.MCESServer.download(self.server_folder + "/MCES_configs/server_md5.json") 迁移到前端完成
         server_md5 = json.loads(open(self.server_folder + "/MCES_configs/server_md5.json").read())
         update_list = []
         for k, v in server_md5.items():
@@ -185,23 +206,94 @@ class MinecraftServer:
                 update_list.append(k)
         return update_list
 
-    def update_server_list(self,init): #update server files
+    def update_server_list(self): #更新服务器的文件
         all_md5 = {}  # local md5
         for folder in self.folders_to_sync:
             all_md5.update(fh.get_all_files_md5(self.server_folder + "/" + folder))
         # download md5 from server
-        if not init:
+        init = False
+        try :
+            Server.MCESServer.download(self.server_folder + "/MCES_configs/server_md5.json")
+        except Server.FileNotFoundError:
+            print("服务器文件未找到")
+            init = True
+
+        if not init: #奇怪的变量名，如果不是第一次运行
             Server.MCESServer.download(self.server_folder + "/MCES_configs/server_md5.json")
             server_md5 = json.loads(open(self.server_folder + "/MCES_configs/server_md5.json").read())
-        else:
+        else:#在服务器全新的时候使用
             server_md5 = {}
+
         update_list = []
         json.dump(all_md5, open(self.server_folder + "/MCES_configs/server_md5.json", "w"))
-        Server.MCESServer.upload(self.server_folder + "/MCES_configs/server_md5.json")#upload md5 to server
+        #在前端处处理异常
+        #这里不应该进行下面的句子，否则可能出现文件同步失败而服务器被更新的问题
+        #Server.MCESServer.upload(self.server_folder + "/MCES_configs/server_md5.json")#upload md5 to server
+
+
         for k, v in all_md5.items():
             if server_md5.get(k) is None or server_md5.get(k) != all_md5.get(k):
                 update_list.append(k)
         return update_list
+
+    def use_file_lock(self):
+        username = Server.MCESServer.username
+        time_now = time.time()
+        open(self.server_folder + "/MCES_configs/file_lock.json", "w").write(json.dumps({"username": username, "time": time_now}))
+        Server.MCESServer.upload(self.server_folder + "/MCES_configs/file_lock.json")
+        os.remove(self.server_folder + "/MCES_configs/file_lock.json")
+
+    def release_file_lock(self):
+        username = ""
+        time_now = ""
+        open(self.server_folder + "/MCES_configs/file_lock.json", "w").write(
+            json.dumps({"username": username, "time": time_now}))
+        Server.MCESServer.upload(self.server_folder + "/MCES_configs/file_lock.json")
+        os.remove(self.server_folder + "/MCES_configs/file_lock.json")
+
+
+    def check_file_lock(self):
+        try:
+            Server.MCESServer.download(self.server_folder + "/MCES_configs/file_lock.json")
+        except Server.FileNotFoundError:
+            return {"username": "", "time": ""}
+        lock = json.loads(open(self.server_folder + "/MCES_configs/file_lock.json").read())
+        os.remove(self.server_folder + "/MCES_configs/file_lock.json")
+        return lock
+
+    def update_local_last_update_time(self): #生成上次更新时间
+        open(self.server_folder + "/MCES_configs/last_sync_time_local.json", "w").write(json.dumps({"time": time.time()}))
+        #Server.MCESServer.upload(self.server_folder + "/MCES_configs/last_sync_time.json")
+
+    def update_server_update_time(self): #修改服务器上次更新时间
+        # if os.path.exists(self.server_folder + "/MCES_configs/last_sync_time_local.json"):
+        #     time_local = json.loads(open(self.server_folder + "/MCES_configs/last_sync_time_local.json").read())["time"]
+        # else:
+        #     time_local = 0
+        open(self.server_folder + "/MCES_configs/last_sync_time.json", "w").write(json.dumps({"time": time.time()}))
+        Server.MCESServer.upload(self.server_folder + "/MCES_configs/last_sync_time.json")
+
+    def check_if_safe_to_update(self):
+        try:
+            Server.MCESServer.download(self.server_folder + "/MCES_configs/last_sync_time.json")
+            time = json.loads(open(self.server_folder + "/MCES_configs/last_sync_time.json").read())
+            server_time = time["time"]
+
+        except Server.FileNotFoundError:
+            server_time = 0
+
+        local_time = json.loads(open(self.server_folder + "/MCES_configs/last_sync_time_local.json").read())["time"]
+        if server_time > local_time:
+            return False
+        else:
+            return True
+
+
+
+
+
+
+
 
 
 
@@ -229,6 +321,7 @@ class MinecraftServer:
 #         "password": "5f4dcc3b5aa765d61d8327deb882cf99",
 #         }
 # test_server = Server(**args)
+# test_server.download("Servers/Minecraft_Server_Test/MCES_configs/server_md5.json")
 # test_mc.add_server(test_server)
 # test_server.add_game_server(test_mc)
 #

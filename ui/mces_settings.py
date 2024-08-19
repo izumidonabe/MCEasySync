@@ -17,7 +17,7 @@ class mces_settings(QWidget,Ui_MCES_Settings_ui):
         if os.path.exists("Servers/MCES_config.json"): #说明不是第一次配置
             kwargs = json.load(open("Servers/MCES_config.json"))
             self.IpEditLine.setText(kwargs.get("ip"))
-            self.PortEditLine.setText(kwargs.get("port"))
+            self.PortEditLine.setText(str(kwargs.get("port")))
             self.UsernameEditLine.setText(kwargs.get("username"))
             self.PasswordLineEdit.setText(kwargs.get("password"))
 

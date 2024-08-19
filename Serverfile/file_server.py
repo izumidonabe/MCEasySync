@@ -47,6 +47,11 @@ def login_required(f):
 def upload():
     file = request.files['file']
     directory = request.form.get('directory')
+    #希望上传的文件夹不包含..和/，防止上传到其他目录
+    if directory.find('..') != -1:
+        return jsonify({'message': '文件上传失败！'}), 400
+    if directory.startswith('/'):
+        return jsonify({'message': '文件上传失败！'}), 400
     if file and directory:
         # 保存上传的文件到指定目录
         upload_folder = os.path.join(app.config['UPLOAD_FOLDER'], directory)
@@ -75,6 +80,10 @@ from flask import send_file, make_response
 @login_required
 def download():
     filepath = request.args.get('filepath')
+    if filepath.find('..') != -1:
+        return jsonify({'message': '文件下载失败！'}), 400
+    if filepath.startswith('/'):
+        return jsonify({'message': '文件下载失败！'}), 400
 
     if filepath:
         print(filepath)

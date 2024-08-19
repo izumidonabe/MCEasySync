@@ -108,7 +108,7 @@ class Window(MSFluentWindow):
 
     def open_MC_Server_manage_ui(self,server_name):
         print("打开"+server_name+" MC服务器管理界面")
-        self.mcserver_manage.reinitailze()
+        self.mcserver_manage.reinitailze(server_name)
         self.server_ui_stack.setCurrentIndex(self.mc_manage_index)
 
 

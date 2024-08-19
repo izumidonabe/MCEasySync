@@ -19,3 +19,6 @@ def get_all_files_md5(folder):  #获取文件夹下所有文件的md5值 走相�
             file_path = os.path.join(root, f)
             files_md5[file_path] = get_file_md5(file_path)
     return files_md5
+
+
+  #锁定文件
