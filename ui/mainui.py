@@ -9,11 +9,13 @@ from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme,
 from qfluentwidgets import FluentIcon as FIF
 
 from ui.add_server import add_server_Ui
+from ui.main_page import main_page_ui
 from ui.mces_settings import mces_settings
 from ui.mces_settings_ui import Ui_MCES_Settings_ui
 from ui.mcserver_manage_ui import mcserver_manage_Ui
 from ui.serverlist import serverlist
 from ui.serverlist_ui import Ui_serverlist_ui
+from updater import updater
 
 
 class Widget(QFrame):
@@ -35,6 +37,9 @@ class Window(MSFluentWindow):
 
         super().__init__()
         self._initialized = True
+
+
+
         #用于切换页面
         server_ui_stack = QStackedWidget()
         server_ui_stack.setObjectName("serverlist_ui")
@@ -61,12 +66,11 @@ class Window(MSFluentWindow):
 
         self.server_ui_stack = server_ui_stack
         #临时调试
-        self.homeInterface = Widget('Main', self)
-        #self.homeInterface = mcserver_manage_Ui()
+        self.homeInterface = main_page_ui()
         self.serverListInterface = server_ui_stack
-        self.appInterface = Widget('Application Interface', self)
-        self.videoInterface = Widget('Video Interface', self)
-        self.libraryInterface = Widget('library Interface', self)
+        #self.appInterface = Widget('Application Interface', self)
+        #self.videoInterface = Widget('Video Interface', self)
+        #self.libraryInterface = Widget('library Interface', self)
         self.initNavigation()
         self.initWindow()
 
@@ -77,6 +81,16 @@ class Window(MSFluentWindow):
         serverlist_ui.open_MCES_config_signal.connect(self.on_MCES_server_set_button_clicked)
         serverlist_ui.open_AddServer_signal.connect(self.on_AddServer_button_clicked)
         serverlist_ui.open_MC_Server_Manage_signal.connect(self.open_MC_Server_manage_ui)
+        update_msg = updater().update()
+        if update_msg is not None:
+            w = Dialog("更新", "发现新版本"+update_msg[0]+"\n"+update_msg[1])
+            w.yesButton.setText('立刻更新')
+            w.cancelButton.setText('下次再说')
+            w.cancelButton.hide()
+            if w.exec():
+                print("确认")
+                QDesktopServices.openUrl(QUrl(update_msg[2]))
+                sys.exit()
 
         if not os.path.exists("Servers/MCES_config.json"):
             w = Dialog("警告", "你还没有配置MCES服务器，必须先配置相关信息才能使用MCES功能", self)
@@ -126,16 +140,16 @@ class Window(MSFluentWindow):
             selectable=True,
         )
 
-        self.addSubInterface(self.appInterface, FIF.APPLICATION, '应用')
-        self.addSubInterface(self.videoInterface, FIF.VIDEO, '视频')
+        #self.addSubInterface(self.appInterface, FIF.APPLICATION, '应用')
+        #self.addSubInterface(self.videoInterface, FIF.VIDEO, '视频')
 
-        self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', FIF.LIBRARY_FILL, NavigationItemPosition.BOTTOM)
+        #self.addSubInterface(self.libraryInterface, FIF.BOOK_SHELF, '库', FIF.LIBRARY_FILL, NavigationItemPosition.BOTTOM)
 
         # 添加自定义导航组件
         self.navigationInterface.addItem(
             routeKey='Help',
             icon=FIF.HELP,
-            text='帮助',
+            text='关于',
             onClick=self.showMessageBox,
             selectable=False,
             position=NavigationItemPosition.BOTTOM,
@@ -154,15 +168,16 @@ class Window(MSFluentWindow):
 
     def showMessageBox(self):
         w = MessageBox(
-            '支持作者🥰',
-            '个人开发不易，如果这个项目帮助到了您，可以考虑请作者喝一瓶快乐水🥤。您的支持就是作者开发和维护项目的动力🚀',
+            '关于',
+            '由@izumidonabe 和泉砂锅开发!\n个人开发不易，如果这个项目帮助到了您，可以考虑给作者点一个免费的Star。您的支持就是作者开发和维护项目的动力🚀',
             self
         )
         w.yesButton.setText('来啦老弟')
         w.cancelButton.setText('下次一定')
 
         if w.exec():
-            QDesktopServices.openUrl(QUrl("https://qfluentwidgets.com/zh/price/"))
+            QDesktopServices.openUrl(QUrl("https://github.com/izumidonabe/MCEasySync/"))
+
 
 
 
