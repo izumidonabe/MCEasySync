@@ -1,4 +1,5 @@
 from PySide2.QtWidgets import QWidget
+
 from ui.Main_page_ui import Ui_main_page_ui
 from updater import updater
 

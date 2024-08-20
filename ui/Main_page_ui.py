@@ -11,13 +11,12 @@
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
-
-from qfluentwidgets import CardWidget
 from qfluentwidgets import BodyLabel
+from qfluentwidgets import CardWidget
+from qfluentwidgets import LargeTitleLabel
 from qfluentwidgets import StrongBodyLabel
 from qfluentwidgets import SubtitleLabel
 from qfluentwidgets import TitleLabel
-from qfluentwidgets import LargeTitleLabel
 
 
 class Ui_main_page_ui(object):

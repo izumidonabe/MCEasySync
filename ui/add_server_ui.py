@@ -11,14 +11,12 @@
 from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
-
-from qfluentwidgets import PushButton
-from qfluentwidgets import PrimaryPushButton
-from qfluentwidgets import IconWidget
 from qfluentwidgets import CardWidget
+from qfluentwidgets import IconWidget
+from qfluentwidgets import LineEdit
+from qfluentwidgets import PrimaryPushButton
 from qfluentwidgets import SingleDirectionScrollArea
 from qfluentwidgets import TitleLabel
-from qfluentwidgets import LineEdit
 
 
 class Ui_Add_Server_Ui(object):

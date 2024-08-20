@@ -1,6 +1,6 @@
 import requests
 
-from old_version.Serverfile.file_server import users
+
 
 def compare_versions(version1, version2):
     if version1.startswith("v"):

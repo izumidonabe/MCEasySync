@@ -3,18 +3,16 @@ import sys
 
 from PySide2.QtCore import Qt, QUrl
 from PySide2.QtGui import QIcon, QDesktopServices
-from PySide2.QtWidgets import QFrame, QHBoxLayout, QApplication, QWidget, QStackedWidget
-from qfluentwidgets import (NavigationItemPosition, MessageBox, setTheme, Theme, MSFluentWindow,
-                            NavigationAvatarWidget, qrouter, SubtitleLabel, setFont, Dialog)
+from PySide2.QtWidgets import QFrame, QHBoxLayout, QApplication, QStackedWidget
 from qfluentwidgets import FluentIcon as FIF
+from qfluentwidgets import (NavigationItemPosition, MessageBox, MSFluentWindow,
+, SubtitleLabel, setFont, Dialog)
 
 from ui.add_server import add_server_Ui
 from ui.main_page import main_page_ui
 from ui.mces_settings import mces_settings
-from ui.mces_settings_ui import Ui_MCES_Settings_ui
 from ui.mcserver_manage_ui import mcserver_manage_Ui
 from ui.serverlist import serverlist
-from ui.serverlist_ui import Ui_serverlist_ui
 from updater import updater
 
 

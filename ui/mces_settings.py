@@ -4,9 +4,9 @@ import os.path
 from PySide2.QtCore import Signal
 from PySide2.QtWidgets import QWidget
 
-
-from ui.mces_settings_ui import Ui_MCES_Settings_ui
 from Server import Server
+from ui.mces_settings_ui import Ui_MCES_Settings_ui
+
 
 class mces_settings(QWidget,Ui_MCES_Settings_ui):
     back_button_clicked_Sig = Signal()

@@ -2,10 +2,8 @@ from PySide2.QtCore import *
 from PySide2.QtGui import *
 from PySide2.QtWidgets import *
 
-from qfluentwidgets import CardWidget, GroupHeaderCardWidget, InfoBarIcon, FluentIcon, SubtitleLabel, BodyLabel, \
+from qfluentwidgets import GroupHeaderCardWidget, FluentIcon, BodyLabel, \
     PushButton, PrimaryPushButton, ProgressBar, ComboBox, StrongBodyLabel
-from qfluentwidgets import SimpleCardWidget
-from qfluentwidgets import HeaderCardWidget
 from qfluentwidgets import ScrollArea
 from qfluentwidgets.components.widgets.flyout import IconWidget
 

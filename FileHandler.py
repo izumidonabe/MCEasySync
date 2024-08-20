@@ -1,6 +1,5 @@
 #本文件用于实现多种文件方法
 import os
-import shutil
 import hashlib
 
 
