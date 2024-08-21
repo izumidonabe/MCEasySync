@@ -1,8 +1,8 @@
 import json
 import os.path
 
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QWidget
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget
 
 from Server import Server
 from ui.mces_settings_ui import Ui_MCES_Settings_ui

@@ -1,5 +1,5 @@
-from PySide2.QtCore import Signal
-from PySide2.QtWidgets import QWidget
+from PySide6.QtCore import Signal
+from PySide6.QtWidgets import QWidget
 
 from Server import MinecraftServer, Server
 from ui.add_server_ui import Ui_Add_Server_Ui

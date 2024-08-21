@@ -1,8 +1,8 @@
 import json
 import os.path
 
-from PySide2.QtCore import Signal, QSize
-from PySide2.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy
+from PySide6.QtCore import Signal, QSize
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy
 from qfluentwidgets import CardWidget, IconWidget, TitleLabel, PushButton, TransparentToolButton, FluentIcon
 
 from ui.serverlist_ui import Ui_serverlist_ui

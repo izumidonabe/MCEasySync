@@ -8,9 +8,9 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from qfluentwidgets import CardWidget
 from qfluentwidgets import IconWidget
 from qfluentwidgets import LineEdit
@@ -58,7 +58,7 @@ class Ui_Add_Server_Ui(object):
         font = QFont()
         font.setPointSize(12)
         font.setBold(False)
-        font.setWeight(50)
+        font.setWeight(QFont.Weight(50))
         self.ServerName_edit.setFont(font)
 
         self.horizontalLayout_6.addWidget(self.ServerName_edit)

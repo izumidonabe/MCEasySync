@@ -1,7 +1,8 @@
 import json
 from time import ctime
 
-from PySide2.QtWidgets import QWidget
+from PySide6.QtCore import QThread, Signal
+from PySide6.QtWidgets import QWidget
 from qfluentwidgets import Flyout, InfoBarIcon, FlyoutAnimationType
 
 from Server import frpClient, MinecraftServer, Server
@@ -50,7 +51,7 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
     def start_minecraft_server(self):
         #TODO 您是否忘了同步文件？
         try:
-            if not self.MCSERVER.check_if_safe_to_start():
+            if not self.MCSERVER.check_if_safe_to_update():
                 self.raise_alert("错误","服务器上次同步的文件生成时间晚于本地文件，可认为服务器文件较新，请先同步文件再运行服务器")
                 return 0
             lock = self.MCSERVER.check_file_lock()
@@ -111,9 +112,7 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
             self.raise_a_message("新消息","服务器更新完成")
 
         else:
-            update_list = self.MCSERVER.update_local_list()
-            files_num = len(update_list)
-            self.sync_process_bar.setRange(0, files_num)
+
             try:
                 Server.MCESServer.download(self.MCSERVER.server_folder + "/MCES_configs/server_md5.json")
             except Server.FileNotFoundError:
@@ -125,6 +124,9 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
                 self.raise_alert("错误","服务器连接出现问题，请重试")
                 self.sync_process_bar.error()
                 return 0
+            update_list = self.MCSERVER.update_local_list()
+            files_num = len(update_list)
+            self.sync_process_bar.setRange(0, files_num)
             try:
                 for file in update_list:
                     Server.MCESServer.download(file)
@@ -134,6 +136,13 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
                 self.raise_a_message("错误","服务器连接出现问题，请重试")
                 return 0
             self.raise_a_message("新消息", "本地更新完成")
+            self.MCSERVER.update_local_last_update_time()
+            # download_thread = DownloadThread(update_list, Server.MCESServer)
+            # download_thread.progress.connect(lambda:self.sync_process_bar.setVal)
+            # download_thread.error.connect(lambda: self.raise_alert("错误","服务器连接出现问题，请重试"))
+            # download_thread.finished.connect(lambda:self.MCSERVER.update_local_last_update_time)
+            # download_thread.finished.connect(lambda:self.raise_a_message("新消息", "本地更新完成"))
+            # download_thread.start()
 
 
     def raise_a_message(self,title,message):

@@ -150,6 +150,10 @@ class MinecraftServer:
     def __init__(self, **kwargs):
         if kwargs.get("config_file") is not None:
             self.__dict__ = json.loads(open(kwargs.get("config_file")).read())
+            if self.customstart_command is None:
+                self.start_command = f"java -Xmx{self.server_memory} -jar {self.server_core}"
+            else:
+                self.start_command = self.customstart_command
         else:
             self.server_folder = kwargs.get("server_folder")
             self.folders_to_sync = kwargs.get("folders_to_sync")
@@ -159,18 +163,25 @@ class MinecraftServer:
             self.server_status = "stopped"
             self.start_command = f"java -Xmx{self.server_memory} -jar {self.server_core}"
             self.server_name = self.server_folder.split("/")[-1]
+            #TODO 自定义启动命令
+            self.customstart_command = None
             if os.path.exists(self.server_folder + "/MCES_configs") is False:
                 os.mkdir(self.server_folder + "/MCES_configs/")
 
     def start_minecraft_server(self):
-        mc_process = subprocess.Popen(self.start_command, cwd=self.server_folder, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        print("Minecraft Server started"+self.start_command)
+        mc_process = subprocess.Popen(self.start_command, cwd=self.server_folder, shell=False, stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
+        print("Minecraft Server started "+self.start_command)
         self.server_process = mc_process
+        self.server_process.stdin.write("n\n")
+        #mc_process.communicate(input="n\n")
+        #mc_process_thread = threading.Thread(target=run_mc_process, args=(mc_process,))
+        #mc_process_thread.start()
+
         self.server_status = "running"
 
     def stop_minecraft_server(self):
         #TODO UI重新初始化的时候会出现问题，因为MC_Server的实例会被重新创建，但是MinecraftServer这个进程不会被绑定在新的实例上
-        self.server_process.communicate(input="stop\n")
+        self.server_process.stdin.write("stop\n")
         self.server_status = "stopped"
         self.server_process = None
 
@@ -278,8 +289,12 @@ class MinecraftServer:
 
         except Server.FileNotFoundError:
             server_time = 0
-
-        local_time = json.loads(open(self.server_folder + "/MCES_configs/last_sync_time_local.json").read())["time"]
+        try:
+            local_time = json.loads(open(self.server_folder + "/MCES_configs/last_sync_time_local.json").read())["time"]
+        except FileNotFoundError:
+            local_time = 0
+        if server_time==0 and local_time==0:
+            return True
         if server_time > local_time:
             return False
         else:

@@ -8,9 +8,9 @@
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from PySide2.QtCore import *
-from PySide2.QtGui import *
-from PySide2.QtWidgets import *
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
 from qfluentwidgets import BodyLabel
 from qfluentwidgets import CardWidget
 from qfluentwidgets import LargeTitleLabel
@@ -61,7 +61,7 @@ class Ui_main_page_ui(object):
         font = QFont()
         font.setPointSize(12)
         font.setBold(False)
-        font.setWeight(50)
+        font.setWeight(QFont.Weight(50))
         self.BodyLabel.setFont(font)
 
         self.verticalLayout_3.addWidget(self.BodyLabel)
@@ -113,7 +113,7 @@ class Ui_main_page_ui(object):
         font1 = QFont()
         font1.setPointSize(9)
         font1.setBold(False)
-        font1.setWeight(50)
+        font1.setWeight(QFont.Weight(50))
         self.UPDATE_LOG_TITLE.setFont(font1)
         self.UPDATE_LOG_TITLE.setWordWrap(True)
 
