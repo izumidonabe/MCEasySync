@@ -18,8 +18,8 @@ def compare_versions(version1, version2):
         return 0
 
 class updater():
-    VERSION = 'v2.0.2'
-    UPDATE_LOG = '修复进度条bug，修复图标显示bug，优化部分图标。服务端重新维护路径，目前可保证unix兼容性'
+    VERSION = 'v2.1.0'
+    UPDATE_LOG = '修复进度条bug，修复图标显示bug，优化部分图标。服务端重新维护路径，目前可保证unix兼容性，添加音效'
     github_url = 'https://api.github.com/repos/izumidonabe/MCEasySync/releases/latest'
     kkgithub_url = 'https://api.kkgithub.com/repos/izumidonabe/MCEasySync/releases/latest'
     use_kkgithub = False # 使用 kkgithub 代替 github来尝试加速

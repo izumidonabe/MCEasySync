@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QA
 from qfluentwidgets import CardWidget, IconWidget, TitleLabel, PushButton, TransparentToolButton, FluentIcon, qconfig, \
     ThemeColor
 
+import resources_helper
 from ui.serverlist_ui import Ui_serverlist_ui
 
 

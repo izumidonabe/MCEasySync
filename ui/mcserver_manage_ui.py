@@ -1,12 +1,51 @@
 import json
 from time import ctime
 
+import winsound
 from PySide6.QtCore import QThread, Signal
 from PySide6.QtWidgets import QWidget
 from qfluentwidgets import Flyout, InfoBarIcon, FlyoutAnimationType
 
 from Server import frpClient, MinecraftServer, Server
 from ui.mc_Server_manage_Ui import Ui_McServer_manage_UI
+
+class DownloadThread(QThread):
+    progress = Signal(int)
+    error = Signal(str)
+    finished = Signal()
+
+    def __init__(self, files, server):
+        super().__init__()
+        self.files = files
+        self.server = server
+
+    def run(self):
+        try:
+            for i, file in enumerate(self.files):
+                self.server.download(file)
+                self.progress.emit(i + 1)
+            self.finished.emit()
+        except Server.ServerConnectionError as e:
+            self.error.emit(str(e))
+
+class UploadThread(QThread):
+    progress = Signal(int)
+    error = Signal(str)
+    finished = Signal()
+
+    def __init__(self, files, server):
+        super().__init__()
+        self.files = files
+        self.server = server
+
+    def run(self):
+        try:
+            for i, file in enumerate(self.files):
+                self.server.upload(file)
+                self.progress.emit(i + 1)
+            self.finished.emit()
+        except Server.ServerConnectionError as e:
+            self.error.emit(str(e))
 
 
 class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
@@ -16,6 +55,8 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
         self.FRPC = frpClient()
         self.MCSERVER = None
         self.MCES_SERVER = None
+        self.upload_thread = None
+        self.download_thread = None
 
     def reinitailze(self,server_name):
         self.FRPC = frpClient()
@@ -31,8 +72,10 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
 
         self.startmcButton.clicked.connect(self.start_minecraft_server)
         self.stopmcButton.clicked.connect(self.stop_minecraft_server)
+        print("reinitailze")
+        self.sync_start_button.clicked.connect(lambda:self.sync_files())
 
-        self.sync_start_button.clicked.connect(self.sync_files)
+
 
 
 
@@ -83,11 +126,14 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
     #TODO 优化文件时间检查，似乎有逻辑问题
 
     def sync_files(self):
+        self.sync_process_bar.resume()
         chosen_index = self.choose_sync_mode_box.currentIndex() #0: 更新服务器文件 1: 更新本地
+        #上传文件
         if chosen_index == 0:
             try:
                 if not self.MCSERVER.check_if_safe_to_update():
                     self.raise_alert("错误","服务器上次同步的文件生成时间晚于本地文件，可认为服务器文件较新")
+                    self.sync_process_bar.error()
                     return 0
 
                 update_list = self.MCSERVER.update_server_list()
@@ -98,26 +144,40 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
 
             files_num = len(update_list)
             self.sync_process_bar.setRange(0,files_num)
-            try:
-                for file in update_list:
-                    Server.MCESServer.upload(file)
-                    self.sync_process_bar.setVal(self.sync_process_bar.getVal()+1)
-                Server.MCESServer.upload(self.MCSERVER.server_folder + "/MCES_configs/server_md5.json")  # upload md5 to server
-                self.MCSERVER.update_server_update_time() # update server update time
-            except Server.ServerConnectionError:
-                self.raise_alert("错误","服务器连接出现问题，请重试")
-                self.sync_process_bar.error()
-                return 0
+            #接着开始尝试上传文件
 
-            self.raise_a_message("新消息","服务器更新完成")
+            self.upload_thread = UploadThread(update_list, Server.MCESServer)
+            self.upload_thread.progress.connect(lambda val :self.sync_process_bar.setVal(val))
+            self.upload_thread.error.connect(lambda:self.raise_alert("错误","服务器连接出现问题，请重试"))
+            self.upload_thread.error.connect(lambda:self.sync_process_bar.error())
+            self.upload_thread.finished.connect(lambda:Server.MCESServer.upload(self.MCSERVER.server_folder + "/MCES_configs/server_md5.json"))
+            self.upload_thread.finished.connect(lambda:self.MCSERVER.update_server_update_time())
+            self.upload_thread.finished.connect(lambda:self.raise_a_message("新消息", "服务器更新完成"))
+            self.upload_thread.start()
 
+
+
+            # try:
+            #     for file in update_list:
+            #         Server.MCESServer.upload(file)
+            #         self.sync_process_bar.setVal(self.sync_process_bar.getVal()+1)
+            #     Server.MCESServer.upload(self.MCSERVER.server_folder + "/MCES_configs/server_md5.json")  # upload md5 to server
+            #     self.MCSERVER.update_server_update_time() # update server update time
+            # except Server.ServerConnectionError:
+            #     self.raise_alert("错误","服务器连接出现问题，请重试")
+            #     self.sync_process_bar.error()
+            #     return 0
+            #
+            # self.raise_a_message("新消息","服务器更新完成")
+
+
+        #下载文件
         else:
 
             try:
                 Server.MCESServer.download(self.MCSERVER.server_folder + "/MCES_configs/server_md5.json")
             except Server.FileNotFoundError:
                 self.raise_alert("错误","更新列表文件未找到，可能是服务器还未初始化")
-                self.sync_process_bar.error()
                 self.sync_process_bar.error()
                 return 0
             except Server.ServerConnectionError:
@@ -127,25 +187,32 @@ class mcserver_manage_Ui(QWidget,Ui_McServer_manage_UI):
             update_list = self.MCSERVER.update_local_list()
             files_num = len(update_list)
             self.sync_process_bar.setRange(0, files_num)
-            try:
-                for file in update_list:
-                    Server.MCESServer.download(file)
-                    self.sync_process_bar.setVal(self.sync_process_bar.getVal()+1)
 
-            except Server.ServerConnectionError as e:
-                self.raise_a_message("错误","服务器连接出现问题，请重试")
-                return 0
-            self.raise_a_message("新消息", "本地更新完成")
-            self.MCSERVER.update_local_last_update_time()
-            # download_thread = DownloadThread(update_list, Server.MCESServer)
-            # download_thread.progress.connect(lambda:self.sync_process_bar.setVal)
-            # download_thread.error.connect(lambda: self.raise_alert("错误","服务器连接出现问题，请重试"))
-            # download_thread.finished.connect(lambda:self.MCSERVER.update_local_last_update_time)
-            # download_thread.finished.connect(lambda:self.raise_a_message("新消息", "本地更新完成"))
-            # download_thread.start()
+            self.download_thread = DownloadThread(update_list, Server.MCESServer)
+            self.download_thread.progress.connect(lambda val: self.sync_process_bar.setVal(val))
+            self.download_thread.error.connect(lambda: self.raise_alert("错误","服务器连接出现问题，请重试"))
+            self.download_thread.error.connect(lambda: self.sync_process_bar.error())
+            self.download_thread.finished.connect(lambda: self.MCSERVER.update_local_last_update_time())
+            self.download_thread.finished.connect(lambda: self.raise_a_message("新消息", "本地更新完成"))
+            self.download_thread.start()
+
+            # try:
+            #     for file in update_list:
+            #         Server.MCESServer.download(file)
+            #         self.sync_process_bar.setVal(self.sync_process_bar.getVal()+1)
+            #
+            # except Server.ServerConnectionError as e:
+            #     self.raise_a_message("错误","服务器连接出现问题，请重试")
+            #     return 0
+            # self.raise_a_message("新消息", "本地更新完成")
+            # self.MCSERVER.update_local_last_update_time()
+
+
+
 
 
     def raise_a_message(self,title,message):
+        winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
         Flyout.create(
             icon=InfoBarIcon.SUCCESS,
             title=title,
