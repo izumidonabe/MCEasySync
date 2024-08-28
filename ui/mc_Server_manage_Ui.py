@@ -16,15 +16,19 @@ class Ui_McServer_manage_UI(object):
 
         self.verticalLayout = QVBoxLayout(McServer_UI)
         self.verticalLayout.setObjectName(u"verticalLayout")
+
         self.ScrollArea = ScrollArea(McServer_UI)
         self.ScrollArea.setObjectName(u"ScrollArea")
         self.ScrollArea.setWidgetResizable(True)
+        self.ScrollArea.setStyleSheet("QScrollArea{background: transparent; border: none}")
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
         self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 729, 452))
+        self.scrollAreaWidgetContents.setStyleSheet("QWidget{background: transparent}")
 
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
 
         #header_font = QFont("Microsoft YaHei", 12)
 

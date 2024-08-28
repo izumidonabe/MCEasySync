@@ -48,11 +48,18 @@ class Ui_serverlist_ui(object):
         self.MCServersScroll = SingleDirectionScrollArea(serverlist_ui)
         self.MCServersScroll.setObjectName(u"MCServersScroll")
         self.MCServersScroll.setWidgetResizable(True)
+
+        self.MCServersScroll.setStyleSheet("QScrollArea{background: transparent; border: none}")
+
+
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
         self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 982, 453))
+        self.scrollAreaWidgetContents_2.setStyleSheet("QWidget{background: transparent}")
+
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         #从这里开始负责卡片的生成
 
 

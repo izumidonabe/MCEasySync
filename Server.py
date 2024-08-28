@@ -319,12 +319,18 @@ class MinecraftServer:
 
 
 
-# args = {"server_folder": "Servers/Minecraft_Server_Test",
+# args = {"server_folder": "Servers/No Flesh Within Chest-Beta 0.3.2-server",
 #         "folders_to_sync": ["world", "CustomWidgets","world_nether","world_the_end"],
 #         "server_core": "paper-1.18.2-388.jar",
 #         "server_memory": "2G",
 #         }
+#args = json.loads(open("Servers/No Flesh Within Chest-Beta 0.3.2-server/MCES_configs/server_config.json").read())
+# args = {"config_file": "Servers/No Flesh Within Chest-Beta 0.3.2-server/MCES_configs/server_config.json"}
+# print(args)
+# print()
 # test_mc = MinecraftServer(**args)
+# print(test_mc.__dict__)
+# test_mc.start_minecraft_server()
 #
 #
 # args = {"ip": "127.0.0.1",

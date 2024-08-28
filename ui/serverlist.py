@@ -2,8 +2,10 @@ import json
 import os.path
 
 from PySide6.QtCore import Signal, QSize
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy
-from qfluentwidgets import CardWidget, IconWidget, TitleLabel, PushButton, TransparentToolButton, FluentIcon
+from PySide6.QtGui import QColor
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QApplication
+from qfluentwidgets import CardWidget, IconWidget, TitleLabel, PushButton, TransparentToolButton, FluentIcon, qconfig, \
+    ThemeColor
 
 from ui.serverlist_ui import Ui_serverlist_ui
 
