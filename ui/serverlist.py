@@ -30,18 +30,6 @@ class serverlist(QWidget,Ui_serverlist_ui):
         for server_name in self.avalible_servers:
             self.Add_New_Server_Card(server_name)
 
-        #color = ThemeColor.PRIMARY.color()
-        #color = QColor(255, 255, 255, 18)
-        #color = QColor(243, 243, 243)
-        # color = QColor(249, 249, 249, )
-        # color_name = color.name()
-        # self.scrollAreaWidgetContents_2.setStyleSheet(f"background-color: {color_name}; border: none;")
-        # self.MCServersScroll.setStyleSheet("scrollAreaWidgetContents_2{background: transparent; border: none}")
-        #self.scrollAreaWidgetContents_2.enableTransparentBackground()
-
-
-
-
 
         self.MCServerSetB.clicked.connect(self.MCServerSetB_clicked)
         self.MCESServerSetB.clicked.connect(self.MCESServerSetB_clicked)
@@ -65,7 +53,8 @@ class serverlist(QWidget,Ui_serverlist_ui):
         self.MCServerIcon.setObjectName(u"MCServerIcon")
         self.MCServerIcon.setMaximumSize(QSize(60, 60))
         self.horizontalLayout_6.addWidget(self.MCServerIcon)
-        self.MCServerIcon.icon = QIcon('resources/creeper_logo.png')
+        icon_dir = resources_helper.get_resource_path('resources/creeper_logo.png')
+        self.MCServerIcon.icon = QIcon(icon_dir)
 
         self.MCServerNameL = TitleLabel(self.CardWidget)
         self.MCServerNameL.setObjectName(u"MCServerNameL")
